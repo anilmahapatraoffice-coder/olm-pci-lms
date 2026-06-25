@@ -58,7 +58,7 @@ router.post('/:id/enroll', authMiddleware, async (req, res) => {
   try {
     const id = uuidv4();
     await pool.query(
-      'INSERT IGNORE INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?)',
+      'INSERT INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?) ON CONFLICT (user_id, course_id) DO NOTHING',
       [id, req.user.id, req.params.id]
     );
     res.json({ message: 'Enrolled successfully' });
@@ -72,7 +72,7 @@ router.post('/progress/:chapterId', authMiddleware, async (req, res) => {
   try {
     const id = uuidv4();
     await pool.query(
-      'INSERT IGNORE INTO progress (id, user_id, chapter_id) VALUES (?, ?, ?)',
+      'INSERT INTO progress (id, user_id, chapter_id) VALUES (?, ?, ?) ON CONFLICT (user_id, chapter_id) DO NOTHING',
       [id, req.user.id, req.params.chapterId]
     );
     res.json({ message: 'Progress saved' });

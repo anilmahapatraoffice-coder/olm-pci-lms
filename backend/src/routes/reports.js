@@ -55,7 +55,7 @@ router.get('/assessments', authMiddleware, adminOnly, async (req, res) => {
       `SELECT u.name, u.mobile, u.district, u.block, u.gp,
               a.title AS assessment_title, a.type, a.pass_score,
               sub.score, sub.attempt_number, sub.submitted_at,
-              IF(sub.score >= a.pass_score, 'Pass', 'Fail') AS result
+              CASE WHEN sub.score >= a.pass_score THEN 'Pass' ELSE 'Fail' END AS result
        FROM assessment_submissions sub
        JOIN users u ON sub.user_id = u.id
        JOIN assessments a ON sub.assessment_id = a.id

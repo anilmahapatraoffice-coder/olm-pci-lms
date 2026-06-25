@@ -203,7 +203,7 @@ router.post('/assign-course', ...auth, async (req, res) => {
   const { user_id, course_id } = req.body;
   const id = uuidv4();
   try {
-    await pool.query('INSERT IGNORE INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?)', [id, user_id, course_id]);
+    await pool.query('INSERT INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?) ON CONFLICT (user_id, course_id) DO NOTHING', [id, user_id, course_id]);
     res.json({ message: 'Course assigned successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -214,7 +214,7 @@ router.post('/assign-course-bulk', ...auth, async (req, res) => {
   let count = 0;
   for (const uid of user_ids) {
     try {
-      await pool.query('INSERT IGNORE INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?)', [uuidv4(), uid, course_id]);
+      await pool.query('INSERT INTO enrollments (id, user_id, course_id) VALUES (?, ?, ?) ON CONFLICT (user_id, course_id) DO NOTHING', [uuidv4(), uid, course_id]);
       count++;
     } catch {}
   }
