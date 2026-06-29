@@ -11,14 +11,14 @@ router.get('/eligibility/:courseId', authMiddleware, async (req, res) => {
 
     // Total chapters in course
     const [[{ totalChapters }]] = await pool.query(
-      `SELECT COUNT(ch.id) AS totalChapters
+      `SELECT COUNT(ch.id) AS "totalChapters"
        FROM chapters ch JOIN sections s ON ch.section_id = s.id
        WHERE s.course_id = ?`, [courseId]
     );
 
     // Completed chapters by user
     const [[{ completedChapters }]] = await pool.query(
-      `SELECT COUNT(p.id) AS completedChapters
+      `SELECT COUNT(p.id) AS "completedChapters"
        FROM progress p
        JOIN chapters ch ON p.chapter_id = ch.id
        JOIN sections s ON ch.section_id = s.id
@@ -35,10 +35,10 @@ router.get('/eligibility/:courseId', authMiddleware, async (req, res) => {
     let allPostPassed = true;
     for (const assess of postAssessments) {
       const [[{ maxScore }]] = await pool.query(
-        `SELECT COALESCE(MAX(score), 0) AS maxScore FROM assessment_submissions
+        `SELECT COALESCE(MAX(score), 0) AS "maxScore" FROM assessment_submissions
          WHERE user_id = ? AND assessment_id = ?`, [userId, assess.id]
       );
-      if (maxScore < assess.pass_score) { allPostPassed = false; break; }
+      if (Number(maxScore) < assess.pass_score) { allPostPassed = false; break; }
     }
 
     // Already self-certified?

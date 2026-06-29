@@ -68,11 +68,11 @@ router.post('/:id/submit', authMiddleware, async (req, res) => {
 
     // Check attempts
     const [[{ attemptsUsed }]] = await pool.query(
-      'SELECT COUNT(*) AS attemptsUsed FROM assessment_submissions WHERE user_id = ? AND assessment_id = ?',
+      'SELECT COUNT(*) AS "attemptsUsed" FROM assessment_submissions WHERE user_id = ? AND assessment_id = ?',
       [req.user.id, req.params.id]
     );
     const [[{ extraAttempts }]] = await pool.query(
-      `SELECT COUNT(*) AS extraAttempts FROM reassessment_requests WHERE user_id = ? AND assessment_id = ? AND status = 'approved'`,
+      `SELECT COUNT(*) AS "extraAttempts" FROM reassessment_requests WHERE user_id = ? AND assessment_id = ? AND status = 'approved'`,
       [req.user.id, req.params.id]
     );
     const totalAllowed = assessment.max_attempts + Number(extraAttempts);

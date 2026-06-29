@@ -226,7 +226,7 @@ router.post('/assign-course-bulk', ...auth, async (req, res) => {
 // ══════════════════════════════════════════════
 router.get('/stats', ...auth, async (req, res) => {
   const [[{ users }]] = await pool.query("SELECT COUNT(*) AS users FROM users WHERE role='learner'");
-  const [[{ courses }]] = await pool.query('SELECT COUNT(*) AS courses FROM courses WHERE is_active=1');
+  const [[{ courses }]] = await pool.query('SELECT COUNT(*) AS courses FROM courses WHERE is_active=TRUE');
   const [[{ enrollments }]] = await pool.query('SELECT COUNT(*) AS enrollments FROM enrollments');
   const [[{ completions }]] = await pool.query("SELECT COUNT(*) AS completions FROM enrollments WHERE completed_at IS NOT NULL");
   const [[{ pending_reassess }]] = await pool.query("SELECT COUNT(*) AS pending_reassess FROM reassessment_requests WHERE status='pending'");
