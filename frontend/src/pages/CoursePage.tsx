@@ -16,6 +16,15 @@ const typeIcon: Record<string, React.ReactNode> = {
   pdf: <FileText size={16} />, video: <Video size={16} />, image: <Image size={16} />, resource: <BookOpen size={16} />
 };
 
+// Extracts a YouTube video id from any common URL shape (youtu.be/ID,
+// youtube.com/watch?v=ID, youtube.com/embed/ID, with or without extra params).
+function getYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
 export default function CoursePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -207,9 +216,19 @@ export default function CoursePage() {
               </div>
 
               {activeContent.type === 'video' && (
-                <video controls className="content-video" src={activeContent.content_url}>
-                  <source src={activeContent.content_url} />
-                </video>
+                getYouTubeId(activeContent.content_url) ? (
+                  <iframe
+                    className="content-video"
+                    src={`https://www.youtube.com/embed/${getYouTubeId(activeContent.content_url)}`}
+                    title={activeContent.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video controls className="content-video" src={activeContent.content_url}>
+                    <source src={activeContent.content_url} />
+                  </video>
+                )
               )}
               {activeContent.type === 'pdf' && (
                 <iframe
